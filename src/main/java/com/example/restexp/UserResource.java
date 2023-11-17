@@ -3,10 +3,13 @@ package com.example.restexp;
 
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import jakarta.validation.Valid;
 
@@ -32,11 +39,23 @@ public class UserResource {
 	}
 
 
-    @GetMapping("/users")
-	public List<User> Retrivealluser()
+    @GetMapping("/Filtering")
+	public MappingJacksonValue Retrivealluser()
 	{
-		return userdaoservice.findall();
-		
+    	List<User> userslist=Arrays.asList(new User(1 , "arun", LocalDate.now()),
+    			new User(2 , "aru", LocalDate.now()));
+
+    	MappingJacksonValue MappingJacksonValue= new 	MappingJacksonValue(userslist);
+    	
+    	SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("name");
+    	
+    	FilterProvider filters= new SimpleFilterProvider().addFilter("userfilter", filter);
+    	
+    	MappingJacksonValue.setFilters(filters);
+    	
+    	
+		//return userdaoservice.findall();
+    	return MappingJacksonValue;
 	}
     
     @GetMapping("/users/{id}")

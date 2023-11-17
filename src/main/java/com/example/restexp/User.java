@@ -3,6 +3,7 @@ package com.example.restexp;
 import java.time.LocalDate;
 import java.util.function.Predicate;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -10,7 +11,8 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 
-@JsonIgnoreProperties(value = "name")
+//@JsonIgnoreProperties(value = "name")
+@JsonFilter("userfilter")
 public class User{
 	private Integer id;
 	@Size( min=2 , message = "size should be min 2 char")
@@ -28,6 +30,10 @@ public class User{
 		Birthdate = birthdate;
 	}
 	
+	public User() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getName() {
 		return name;
 	}
