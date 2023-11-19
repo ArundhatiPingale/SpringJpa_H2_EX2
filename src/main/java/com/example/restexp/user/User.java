@@ -1,6 +1,7 @@
 package com.example.restexp.user;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Predicate;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
@@ -26,6 +28,15 @@ public class User{
 	@Past(message = "Date should be in past")
 	private LocalDate birthdate;
 	
+	@OneToMany(mappedBy ="user")
+	@JsonIgnore
+	private List<Post> posts;
+	
+	protected User()
+	{
+		
+	}
+	
 	
 	public User(int id, String name, LocalDate birthdate) {
 		super();
@@ -34,9 +45,7 @@ public class User{
 		birthdate = birthdate;
 	}
 	
-	public User() {
-		// TODO Auto-generated constructor stub
-	}
+	
 
 	public String getName() {
 		return name;
@@ -59,6 +68,15 @@ public class User{
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
 	}
 	
 	
