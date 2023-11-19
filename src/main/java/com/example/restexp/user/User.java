@@ -1,4 +1,4 @@
-package com.example.restexp;
+package com.example.restexp.user;
 
 import java.time.LocalDate;
 import java.util.function.Predicate;
@@ -7,27 +7,31 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
-
-//@JsonIgnoreProperties(value = "name")
-@JsonFilter("userfilter")
+@Entity(name="user_details")
 public class User{
+	
+	@Id
+	@GeneratedValue
 	private Integer id;
 	@Size( min=2 , message = "size should be min 2 char")
 	
 	//@JsonIgnore
 	private String name;
 	@Past(message = "Date should be in past")
-	private LocalDate Birthdate;
+	private LocalDate birthdate;
 	
 	
 	public User(int id, String name, LocalDate birthdate) {
 		super();
 		this.id = id;
 		this.name = name;
-		Birthdate = birthdate;
+		birthdate = birthdate;
 	}
 	
 	public User() {
@@ -41,14 +45,14 @@ public class User{
 		this.name = name;
 	}
 	public LocalDate getBirthdate() {
-		return Birthdate;
+		return birthdate;
 	}
 	public void setBirthdate(LocalDate birthdate) {
-		Birthdate = birthdate;
+		birthdate = birthdate;
 	}
 	@Override
 	public String toString() {
-		return "Users [id=" + id + ", name=" + name + ", Birthdate=" + Birthdate + "]";
+		return "Users [id=" + id + ", name=" + name + ", Birthdate=" + birthdate + "]";
 	}
 	public Integer getId() {
 		return id;

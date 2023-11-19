@@ -1,4 +1,4 @@
-package com.example.restexp;
+package com.example.restexp.user;
 
 
 
@@ -6,6 +6,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.example.restexp.jpa.UserRepository;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -28,54 +30,43 @@ import jakarta.validation.Valid;
 @RestController
 public class UserResource {
 	
-	@Autowired
-	private UserDaoService userdaoservice;
+	
+	
+	private UserRepository repository;
 	
 	
 	
-	public UserResource(UserDaoService userdaoservice) {
+	public UserResource(UserRepository repository) {
 		super();
-		this.userdaoservice = userdaoservice;
+		
+		this.repository=repository;
 	}
 
 
-    @GetMapping("/Filtering")
-	public MappingJacksonValue Retrivealluser()
+    @GetMapping("/users")
+	public List<User> Retrivealluser()
 	{
-    	List<User> userslist=Arrays.asList(new User(1 , "arun", LocalDate.now()),
-    			new User(2 , "aru", LocalDate.now()));
-
-    	MappingJacksonValue MappingJacksonValue= new 	MappingJacksonValue(userslist);
+   return repository.findAll();
     	
-    	SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("name");
-    	
-    	FilterProvider filters= new SimpleFilterProvider().addFilter("userfilter", filter);
-    	
-    	MappingJacksonValue.setFilters(filters);
-    	
-    	
-		//return userdaoservice.findall();
-    	return MappingJacksonValue;
 	}
     
     @GetMapping("/users/{id}")
-    
-	public User Retriveuser(@PathVariable int id)
+    public User Retriveuser(@PathVariable int id)
 	{
-		User user= userdaoservice.finduser(id);
+		Optional<User> user= repository.findById(id);
 		
-		 if (user==null)
+		 if (user.isEmpty())
 			 throw new UserNotFoundException(" user not found id:" +id);
 		
 			
-		 return user;
+		 return user.get();
 		
 	}
 
     @DeleteMapping("/users/{id}")
 	public void Deleteuser(@PathVariable int id)
 	{
-		userdaoservice.deleteuser(id);
+    	repository.deleteById(id);
 		
 		
 		
@@ -83,7 +74,7 @@ public class UserResource {
     @PostMapping("/users")
    	public ResponseEntity<User> CreateUser( @Valid @RequestBody User user)
    	{
-   		 User saveduser = userdaoservice.save(user);
+   		 User saveduser = repository.save(user);
    		 
    		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(saveduser.getId()).toUri();
    		 
